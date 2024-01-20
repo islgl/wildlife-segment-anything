@@ -1,5 +1,4 @@
 from yolov5 import run as yolo_run
-from typing import Dict, List
 import yaml
 
 if __name__ == '__main__':
@@ -15,3 +14,4 @@ if __name__ == '__main__':
         data=config['config'],
         device=config['device'],
     )
+    print(result)

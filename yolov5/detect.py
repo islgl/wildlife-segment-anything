@@ -82,7 +82,7 @@ def run(
         save_csv=False,  # save results in CSV format
         save_conf=False,  # save confidences in --save-txt labels
         save_crop=False,  # save cropped prediction boxes
-        nosave=False,  # do not save images/videos
+        nosave=True,  # do not save images/videos
         classes=None,  # filter by class: --class 0, or --class 0 2 3
         agnostic_nms=False,  # class-agnostic NMS
         augment=False,  # augmented inference

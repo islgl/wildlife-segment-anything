@@ -6,3 +6,8 @@
 </div>
 
 Segment Anything Model oriented to Wildlife recognition and segmentation tasks.
+
+---
+
+## Todos
+- [ ] SAM multimask inference
