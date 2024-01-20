@@ -1,0 +1,11 @@
+# Options
+device: cpu
+
+# Dataset
+dataset: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/images/coco
+config: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/coco.yaml
+
+# Model
+# YOLO v5
+yolo: /Users/lgl/code/machine_learning/wildlife-segment-anything/models/yolo/pt/coco.pt
+
