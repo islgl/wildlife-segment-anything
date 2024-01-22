@@ -1,7 +1,9 @@
+import cv2
+
 from yolov5 import run as yolo_run
 from segment_anything import sam_register, sam_inference
+from segment_anything.utils import get_masked_images
 import yaml
-
 
 if __name__ == '__main__':
     # Load configuration
@@ -29,6 +31,12 @@ if __name__ == '__main__':
         predictor=sam,
     )
 
+    # Get masked images
+    masked_images = get_masked_images(
+        dataset=config['dataset'],
+        masks=masks,
+    )
 
-
-
+for image, masked_image in masked_images.items():
+    filename='/Users/lgl/code/machine_learning/wildlife-segment-anything/results/'+image.split('.')[0]+'.png'
+    cv2.imwrite(filename, masked_image.numpy())

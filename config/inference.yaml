@@ -2,7 +2,7 @@
 device: cpu
 
 # Dataset
-dataset: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/images/coco/sheep.jpg
+dataset: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/images/coco
 config: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/coco.yaml
 
 # Model
