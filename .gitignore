@@ -1,6 +1,7 @@
 /data
 /models
 /yolov5/results
+/results
 
 .vscode
 .idea

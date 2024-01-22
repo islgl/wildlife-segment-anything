@@ -1,9 +1,12 @@
-import cv2
+import torch
+import yaml
+import json
 
 from yolov5 import run as yolo_run
-from segment_anything import sam_register, sam_inference
+from segment_anything import sam_register, sam_run
 from segment_anything.utils import get_masked_images
-import yaml
+from mobilenet.utils import preprocess
+from mobilenet import run as mobilenet_run
 
 if __name__ == '__main__':
     # Load configuration
@@ -25,7 +28,7 @@ if __name__ == '__main__':
         model_type=config['sam_model_type'],
         device=config['device'],
     )
-    masks = sam_inference(
+    masks = sam_run(
         dataset=config['dataset'],
         prompt=prompts,
         predictor=sam,
@@ -37,6 +40,20 @@ if __name__ == '__main__':
         masks=masks,
     )
 
-for image, masked_image in masked_images.items():
-    filename='/Users/lgl/code/machine_learning/wildlife-segment-anything/results/'+image.split('.')[0]+'.png'
-    cv2.imwrite(filename, masked_image.numpy())
+    # Run MobileNet inference
+    # Load MobileNet model
+    mobilenet = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
+    mobilenet.eval()
+
+    # Preprocess images
+    mobilenet_input = preprocess(masked_images)
+
+    # Run inference
+    results = mobilenet_run(
+        input_batches=mobilenet_input,
+        label_path=config['labels'],
+    )
+
+    # Save results
+    with open(config['save_path'], 'w') as f:
+        json.dump(results, f)

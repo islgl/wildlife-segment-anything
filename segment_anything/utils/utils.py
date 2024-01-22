@@ -1,13 +1,13 @@
 import cv2
-import matplotlib.pyplot as plt
-import numpy as np
+from PIL.Image import fromarray
+from PIL import Image
 from torch import Tensor
 from typing import Dict
 import os
 import torch
 
 
-def get_masked_image(image: str, masks: Tensor) -> Tensor:
+def get_masked_image(image: str, masks: Tensor) -> Image:
     """
     Get masked image from image and masks
 
@@ -20,7 +20,7 @@ def get_masked_image(image: str, masks: Tensor) -> Tensor:
     """
 
     image = cv2.imread(image)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2BGR)
     image = torch.from_numpy(image)
 
     # (num_objects,num_masks_per_object,height,width)
@@ -28,10 +28,13 @@ def get_masked_image(image: str, masks: Tensor) -> Tensor:
     merged_mask = merged_mask.unsqueeze(2)
 
     masked_image = image * merged_mask
+    masked_image = masked_image.numpy()
+    masked_image = fromarray(masked_image)
+
     return masked_image
 
 
-def get_masked_images(dataset: str, masks: Dict[str, Tensor]) -> Dict[str, Tensor]:
+def get_masked_images(dataset: str, masks: Dict) -> Dict:
     """
     Get masked images from dataset and masks
 

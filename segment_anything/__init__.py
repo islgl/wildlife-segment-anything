@@ -15,4 +15,4 @@ from .predictor import SamPredictor
 
 from .automatic_mask_generator import SamAutomaticMaskGenerator
 
-from .inference import sam_register, sam_inference
+from .inference import sam_register, sam_run

@@ -34,7 +34,7 @@ def sam_register(checkpoint: str, model_type: str = 'vit_b', device: str = 'cpu'
 
 def sam_inference_single(
         image: str,
-        prompt: List[List],
+        prompt: List,
         predictor: SamPredictor,
         multimask_output: bool = False,
 ) -> Tensor:
@@ -70,12 +70,12 @@ def sam_inference_single(
     return masks
 
 
-def sam_inference(
+def sam_run(
         dataset: str,
-        prompt: Dict[str, List[List]],
+        prompt: Dict,
         predictor: SamPredictor,
         multimask_output: bool = False,
-) -> Dict[str, Tensor]:
+) -> Dict:
     """
     Run SAM inference on a dataset.
 
