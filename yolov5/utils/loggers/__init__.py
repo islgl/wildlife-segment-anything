@@ -77,8 +77,8 @@ class Loggers:
         self.weights = weights
         self.opt = opt
         self.hyp = hyp
-        self.plots = not opt.noplots  # plot results
-        self.logger = logger  # for printing results to console
+        self.plots = not opt.noplots  # plot masks
+        self.logger = logger  # for printing masks to console
         self.include = include
         self.keys = [
             "train/box_loss",
@@ -241,7 +241,7 @@ class Loggers:
         # Callback runs at the end of each fit (train+val) epoch
         x = dict(zip(self.keys, vals))
         if self.csv:
-            file = self.save_dir / "results.csv"
+            file = self.save_dir / "masks.csv"
             n = len(x) + 1  # number of cols
             s = "" if file.exists() else (("%20s," * n % tuple(["epoch"] + self.keys)).rstrip(",") + "\n")  # add header
             with open(file, "a") as f:
@@ -251,7 +251,7 @@ class Loggers:
         if self.ndjson_console:
             print(json_data)
         if self.ndjson_file:
-            file = self.save_dir / "results.ndjson"
+            file = self.save_dir / "masks.ndjson"
             with open(file, "a") as f:
                 print(json_data, file=f)
 
@@ -265,7 +265,7 @@ class Loggers:
             if best_fitness == fi:
                 best_results = [epoch] + vals[3:7]
                 for i, name in enumerate(self.best_keys):
-                    self.wandb.wandb_run.summary[name] = best_results[i]  # log best results in the summary
+                    self.wandb.wandb_run.summary[name] = best_results[i]  # log best masks in the summary
             self.wandb.log(x)
             self.wandb.end_epoch()
 
@@ -292,8 +292,8 @@ class Loggers:
     def on_train_end(self, last, best, epoch, results):
         # Callback runs on training end, i.e. saving best model
         if self.plots:
-            plot_results(file=self.save_dir / "results.csv")  # save results.png
-        files = ["results.png", "confusion_matrix.png", *(f"{x}_curve.png" for x in ("F1", "PR", "P", "R"))]
+            plot_results(file=self.save_dir / "masks.csv")  # save masks.png
+        files = ["masks.png", "confusion_matrix.png", *(f"{x}_curve.png" for x in ("F1", "PR", "P", "R"))]
         files = [(self.save_dir / f) for f in files if (self.save_dir / f).exists()]  # filter
         self.logger.info(f"Results saved to {colorstr('bold', self.save_dir)}")
 
@@ -350,7 +350,7 @@ class GenericLogger:
         self.save_dir = Path(opt.save_dir)
         self.include = include
         self.console_logger = console_logger
-        self.csv = self.save_dir / "results.csv"  # CSV logger
+        self.csv = self.save_dir / "masks.csv"  # CSV logger
         if "tb" in self.include:
             prefix = colorstr("TensorBoard: ")
             self.console_logger.info(

@@ -558,7 +558,7 @@ def check_amp(model):
     from models.common import AutoShape, DetectMultiBackend
 
     def amp_allclose(model, im):
-        # All close FP32 vs AMP results
+        # All close FP32 vs AMP masks
         m = AutoShape(model, verbose=False)  # model
         a = m(im).xywhn[0]  # FP32 inference
         m.amp = True
@@ -964,7 +964,7 @@ def non_max_suppression(
     nm=0,  # number of masks
 ):
     """
-    Non-Maximum Suppression (NMS) on inference results to reject overlapping detections.
+    Non-Maximum Suppression (NMS) on inference masks to reject overlapping detections.
 
     Returns:
          list of detections, on (n,6) tensor per image [xyxy, conf, cls]
@@ -1085,7 +1085,7 @@ def strip_optimizer(f="best.pt", s=""):  # from utils.general import *; strip_op
 def print_mutation(keys, results, hyp, save_dir, bucket, prefix=colorstr("evolve: ")):
     evolve_csv = save_dir / "evolve.csv"
     evolve_yaml = save_dir / "hyp_evolve.yaml"
-    keys = tuple(keys) + tuple(hyp.keys())  # [results + hyps]
+    keys = tuple(keys) + tuple(hyp.keys())  # [masks + hyps]
     keys = tuple(x.strip() for x in keys)
     vals = results + tuple(hyp.values())
     n = len(keys)
@@ -1137,7 +1137,7 @@ def print_mutation(keys, results, hyp, save_dir, bucket, prefix=colorstr("evolve
 
 
 def apply_classifier(x, model, img, im0):
-    # Apply a second stage classifier to YOLO outputs
+    # Apply a second stage classifier to YOLO output
     # Example model = torchvision.models.__dict__['efficientnet_b0'](pretrained=True).to(device).eval()
     im0 = [im0] if isinstance(im0, np.ndarray) else im0
     for i, d in enumerate(x):  # per image

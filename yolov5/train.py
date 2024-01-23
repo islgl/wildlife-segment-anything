@@ -194,7 +194,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
     freeze = [f"model.{x}." for x in (freeze if len(freeze) > 1 else range(freeze[0]))]  # layers to freeze
     for k, v in model.named_parameters():
         v.requires_grad = True  # train all layers
-        # v.register_hook(lambda x: torch.nan_to_num(x))  # NaN to 0 (commented for erratic training results)
+        # v.register_hook(lambda x: torch.nan_to_num(x))  # NaN to 0 (commented for erratic training masks)
         if any(x in k for x in freeze):
             LOGGER.info(f"freezing {k}")
             v.requires_grad = False
@@ -234,7 +234,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
     # DP mode
     if cuda and RANK == -1 and torch.cuda.device_count() > 1:
         LOGGER.warning(
-            "WARNING ⚠️ DP not recommended, use torch.distributed.run for best DDP Multi-GPU results.\n"
+            "WARNING ⚠️ DP not recommended, use torch.distributed.run for best DDP Multi-GPU masks.\n"
             "See Multi-GPU Tutorial at https://docs.ultralytics.com/yolov5/tutorials/multi_gpu_training to get started."
         )
         model = torch.nn.DataParallel(model)
@@ -322,7 +322,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
     LOGGER.info(
         f'Image sizes {imgsz} train, {imgsz} val\n'
         f'Using {train_loader.num_workers * WORLD_SIZE} dataloader workers\n'
-        f"Logging results to {colorstr('bold', save_dir)}\n"
+        f"Logging masks to {colorstr('bold', save_dir)}\n"
         f'Starting training for {epochs} epochs...'
     )
     for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
@@ -746,7 +746,7 @@ def main(opt, callbacks=Callbacks()):
                 hyp.update(hyp_GA)
                 results = train(hyp.copy(), opt, device, callbacks)
                 callbacks = Callbacks()
-                # Write mutation results
+                # Write mutation masks
                 keys = (
                     "metrics/precision",
                     "metrics/recall",
@@ -805,7 +805,7 @@ def main(opt, callbacks=Callbacks()):
         best_index = fitness_scores.index(max(fitness_scores))
         best_individual = population[best_index]
         print("Best solution found:", best_individual)
-        # Plot results
+        # Plot masks
         plot_evolve(evolve_csv)
         LOGGER.info(
             f'Hyperparameter evolution finished {opt.evolve} generations\n'

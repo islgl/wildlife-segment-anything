@@ -1,8 +1,9 @@
-import torch
+import torch, gc
 from typing import List, Dict
 from torch import Tensor
 import cv2
 import os
+from tools import release_memory
 
 from .build_sam import (
     build_sam,
@@ -67,6 +68,9 @@ def sam_inference_single(
         multimask_output=multimask_output,
     )
 
+    gc.collect()
+    torch.cuda.empty_cache()
+
     return masks
 
 
@@ -75,6 +79,8 @@ def sam_run(
         prompt: Dict,
         predictor: SamPredictor,
         multimask_output: bool = False,
+        if_log: bool = False,
+        log_path: str = None,
 ) -> Dict:
     """
     Run SAM inference on a dataset.
@@ -84,6 +90,8 @@ def sam_run(
         prompt: Prompt boxes of each image, {image.jpg: [[xmin, ymin, xmax, ymax], ...], ...}.
         predictor: SAM predictor.
         multimask_output: Whether to output multimask.
+        if_log: Whether to log the results.
+        log_path: The path to the log file. Only used when if_log is True.
 
     Returns:
         Masks of each image (num_boxes) x (num_predicted_masks_per_input) x H x W.
@@ -96,8 +104,16 @@ def sam_run(
         length = len(filenames)
 
         for filename in filenames:
-            assert filename in prompt.keys(), "Can't find prompt for image {}".format(filename)
             filepath = os.path.join(dataset, filename)
+            if prompt[filename] == [] or prompt[filename] is None:
+                msg = 'No prompt for image {}'.format(filename)
+                print(msg)
+                if if_log and log_path is not None:
+                    if not os.path.exists(os.path.dirname(log_path)):
+                        os.makedirs(os.path.dirname(log_path))
+                    with open(log_path, 'a') as f:
+                        f.write(msg + '\n')
+                continue
             masks = sam_inference_single(filepath, prompt[filename], predictor, multimask_output)
             results[filename] = masks
             print("Processed {}/{} images".format(len(results), length))

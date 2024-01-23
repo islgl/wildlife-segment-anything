@@ -117,7 +117,7 @@ class SamPredictor:
             produce better masks than a single prediction. If only a single
             mask is needed, the model's predicted quality score can be used
             to select the best mask. For non-ambiguous prompts, such as multiple
-            input prompts, multimask_output=False can give better results.
+            input prompts, multimask_output=False can give better masks.
           return_logits (bool): If true, returns un-thresholded masks logits
             instead of a binary mask.
 
@@ -197,7 +197,7 @@ class SamPredictor:
             produce better masks than a single prediction. If only a single
             mask is needed, the model's predicted quality score can be used
             to select the best mask. For non-ambiguous prompts, such as multiple
-            input prompts, multimask_output=False can give better results.
+            input prompts, multimask_output=False can give better masks.
           return_logits (bool): If true, returns un-thresholded masks logits
             instead of a binary mask.
 

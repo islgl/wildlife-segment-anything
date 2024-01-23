@@ -1,6 +1,7 @@
-import os
+import json
 
-dir='/Users/lgl/code/machine_learning/wildlife-segment-anything/results'
-for img in os.listdir(dir):
-    if img.endswith('.png'):
-        os.rename(os.path.join(dir, img), os.path.join(dir, img.split('.')[0]+'.jpg'))
+if __name__ == '__main__':
+    filepath = '/Users/lgl/code/machine_learning/wildlife-segment-anything/prompts/voc.json'
+    with open(filepath) as f:
+        prompts = json.load(f)
+    print(len(prompts))

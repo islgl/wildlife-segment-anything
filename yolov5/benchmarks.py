@@ -98,7 +98,7 @@ def run(
         if pt_only and i == 0:
             break  # break after PyTorch
 
-    # Print results
+    # Print masks
     LOGGER.info("\n")
     parse_opt()
     notebook_init()  # print system info
@@ -138,7 +138,7 @@ def test(
         except Exception:
             y.append([name, False])  # mAP, t_inference
 
-    # Print results
+    # Print masks
     LOGGER.info("\n")
     parse_opt()
     notebook_init()  # print system info

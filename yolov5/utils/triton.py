@@ -12,7 +12,7 @@ class TritonRemoteModel:
     A wrapper over a model served by the Triton Inference Server.
 
     It can be configured to communicate over GRPC or HTTP. It accepts Torch Tensors as input and returns them as
-    outputs.
+    output.
     """
 
     def __init__(self, url: str):
@@ -65,7 +65,7 @@ class TritonRemoteModel:
         inputs = self._create_inputs(*args, **kwargs)
         response = self.client.infer(model_name=self.model_name, inputs=inputs)
         result = []
-        for output in self.metadata["outputs"]:
+        for output in self.metadata["output"]:
             tensor = torch.as_tensor(response.as_numpy(output["name"]))
             result.append(tensor)
         return result[0] if len(result) == 1 else result

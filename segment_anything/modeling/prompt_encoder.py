@@ -188,7 +188,7 @@ class PositionEmbeddingRandom(nn.Module):
         coords = 2 * coords - 1
         coords = coords @ self.positional_encoding_gaussian_matrix
         coords = 2 * np.pi * coords
-        # outputs d_1 x ... x d_n x C shape
+        # output d_1 x ... x d_n x C shape
         return torch.cat([torch.sin(coords), torch.cos(coords)], dim=-1)
 
     def forward(self, size: Tuple[int, int]) -> torch.Tensor:

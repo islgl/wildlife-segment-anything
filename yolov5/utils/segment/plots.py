@@ -110,13 +110,13 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname="images.jpg"
     annotator.im.save(fname)  # save
 
 
-def plot_results_with_masks(file="path/to/results.csv", dir="", best=True):
-    # Plot training results.csv. Usage: from utils.plots import *; plot_results('path/to/results.csv')
+def plot_results_with_masks(file="path/to/masks.csv", dir="", best=True):
+    # Plot training masks.csv. Usage: from utils.plots import *; plot_results('path/to/masks.csv')
     save_dir = Path(file).parent if file else Path(dir)
     fig, ax = plt.subplots(2, 8, figsize=(18, 6), tight_layout=True)
     ax = ax.ravel()
-    files = list(save_dir.glob("results*.csv"))
-    assert len(files), f"No results.csv files found in {save_dir.resolve()}, nothing to plot."
+    files = list(save_dir.glob("masks*.csv"))
+    assert len(files), f"No masks.csv files found in {save_dir.resolve()}, nothing to plot."
     for f in files:
         try:
             data = pd.read_csv(f)
@@ -142,5 +142,5 @@ def plot_results_with_masks(file="path/to/results.csv", dir="", best=True):
         except Exception as e:
             print(f"Warning: Plotting error for {f}: {e}")
     ax[1].legend()
-    fig.savefig(save_dir / "results.png", dpi=200)
+    fig.savefig(save_dir / "masks.png", dpi=200)
     plt.close()

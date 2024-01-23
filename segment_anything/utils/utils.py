@@ -20,14 +20,19 @@ def get_masked_image(image: str, masks: Tensor) -> Image:
     """
 
     image = cv2.imread(image)
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = torch.from_numpy(image)
 
     # (num_objects,num_masks_per_object,height,width)
     merged_mask = torch.max(masks, dim=0).values[0]
     merged_mask = merged_mask.unsqueeze(2)
 
+    if torch.cuda.is_available():
+        image = image.cuda()
+        merged_mask = merged_mask.cuda()
+
     masked_image = image * merged_mask
+    masked_image = masked_image.cpu()
     masked_image = masked_image.numpy()
     masked_image = fromarray(masked_image)
 
@@ -52,5 +57,8 @@ def get_masked_images(dataset: str, masks: Dict) -> Dict:
         masked_images[image] = get_masked_image(dataset, masks[image])
     else:
         for image in os.listdir(dataset):
-            masked_images[image] = get_masked_image(os.path.join(dataset, image), masks[image])
+            try:
+                masked_images[image] = get_masked_image(os.path.join(dataset, image), masks[image])
+            except KeyError:
+                continue
     return masked_images

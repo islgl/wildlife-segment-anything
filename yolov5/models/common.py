@@ -58,7 +58,7 @@ from utils.torch_utils import copy_attr, smart_inference_mode
 
 
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
-    # Pad to 'same' shape outputs
+    # Pad to 'same' shape output
     if d > 1:
         k = d * (k - 1) + 1 if isinstance(k, int) else [d * (x - 1) + 1 for x in k]  # actual kernel-size
     if p is None:
@@ -498,7 +498,7 @@ class DetectMultiBackend(nn.Module):
                 interpreter = Interpreter(model_path=w)  # load TFLite model
             interpreter.allocate_tensors()  # allocate
             input_details = interpreter.get_input_details()  # inputs
-            output_details = interpreter.get_output_details()  # outputs
+            output_details = interpreter.get_output_details()  # output
             # load metadata
             with contextlib.suppress(zipfile.BadZipFile):
                 with zipfile.ZipFile(w, "r") as model:
@@ -759,7 +759,7 @@ class AutoShape(nn.Module):
 
 
 class Detections:
-    # YOLOv5 detections class for inference results
+    # YOLOv5 detections class for inference masks
     def __init__(self, ims, pred, files, times=(0, 0, 0), names=None, shape=None):
         super().__init__()
         d = pred[0].device  # device
@@ -832,22 +832,22 @@ class Detections:
 
     @TryExcept("Showing images is not supported in this environment")
     def show(self, labels=True):
-        self._run(show=True, labels=labels)  # show results
+        self._run(show=True, labels=labels)  # show masks
 
     def save(self, labels=True, save_dir="runs/detect/exp", exist_ok=False):
         save_dir = increment_path(save_dir, exist_ok, mkdir=True)  # increment save_dir
-        self._run(save=True, labels=labels, save_dir=save_dir)  # save results
+        self._run(save=True, labels=labels, save_dir=save_dir)  # save masks
 
     def crop(self, save=True, save_dir="runs/detect/exp", exist_ok=False):
         save_dir = increment_path(save_dir, exist_ok, mkdir=True) if save else None
-        return self._run(crop=True, save=save, save_dir=save_dir)  # crop results
+        return self._run(crop=True, save=save, save_dir=save_dir)  # crop masks
 
     def render(self, labels=True):
-        self._run(render=True, labels=labels)  # render results
+        self._run(render=True, labels=labels)  # render masks
         return self.ims
 
     def pandas(self):
-        # return detections as pandas DataFrames, i.e. print(results.pandas().xyxy[0])
+        # return detections as pandas DataFrames, i.e. print(masks.pandas().xyxy[0])
         new = copy(self)  # return copy
         ca = "xmin", "ymin", "xmax", "ymax", "confidence", "class", "name"  # xyxy columns
         cb = "xcenter", "ycenter", "width", "height", "confidence", "class", "name"  # xywh columns
@@ -857,7 +857,7 @@ class Detections:
         return new
 
     def tolist(self):
-        # return a list of Detections objects, i.e. 'for result in results.tolist():'
+        # return a list of Detections objects, i.e. 'for result in masks.tolist():'
         r = range(self.n)  # iterable
         return [
             Detections(
@@ -874,11 +874,11 @@ class Detections:
     def print(self):
         LOGGER.info(self.__str__())
 
-    def __len__(self):  # override len(results)
+    def __len__(self):  # override len(masks)
         return self.n
 
-    def __str__(self):  # override print(results)
-        return self._run(pprint=True)  # print results
+    def __str__(self):  # override print(masks)
+        return self._run(pprint=True)  # print masks
 
     def __repr__(self):
         return f"YOLOv5 {self.__class__} instance\n" + self.__str__()

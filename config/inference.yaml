@@ -2,16 +2,22 @@
 device: cpu
 
 # Dataset
-dataset: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/images/coco
-config: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/config/coco.yaml
+dataset: /Users/lgl/Downloads/voc/val/2007_002088.jpg
+config: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/config/voc.yaml
 labels: /Users/lgl/code/machine_learning/wildlife-segment-anything/data/labels/imagenet.txt
+
+# Log
+sam_log: /Users/lgl/code/machine_learning/wildlife-segment-anything/log/sam/animal_track.log
 
 # Model
 # YOLO v5
-yolo: /Users/lgl/code/machine_learning/wildlife-segment-anything/models/yolo/pt/coco.pt
+yolo: /Users/lgl/Downloads/wsam/models/yolo/pt/voc.pt
 # Segment Anything Model
-sam_checkpoint: /Users/lgl/code/machine_learning/wildlife-segment-anything/models/sam/sam_vit_b_01ec64.pth
+sam_checkpoint: /Users/lgl/Downloads/wsam/models/sam/sam_vit_b_01ec64.pth
 sam_model_type: vit_b
 
 # Result
-save_path: /Users/lgl/code/machine_learning/wildlife-segment-anything/results/results.json
+save_path: /Users/lgl/code/machine_learning/wildlife-segment-anything/output
+
+# Other
+prompts: /Users/lgl/code/machine_learning/wildlife-segment-anything/prompts/voc.json

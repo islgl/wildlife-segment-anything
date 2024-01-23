@@ -32,6 +32,8 @@ if __name__ == '__main__':
         dataset=config['dataset'],
         prompt=prompts,
         predictor=sam,
+        if_log=True,
+        log_path=config['sam_log'],
     )
 
     # Get masked images
@@ -54,6 +56,6 @@ if __name__ == '__main__':
         label_path=config['labels'],
     )
 
-    # Save results
+    # Save masks
     with open(config['save_path'], 'w') as f:
         json.dump(results, f)

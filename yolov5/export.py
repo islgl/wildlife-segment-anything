@@ -553,11 +553,11 @@ def export_tfjs(file, int8, prefix=colorstr("TensorFlow.js:")):
     json = Path(f_json).read_text()
     with open(f_json, "w") as j:  # sort JSON Identity_* in ascending order
         subst = re.sub(
-            r'{"outputs": {"Identity.?.?": {"name": "Identity.?.?"}, '
+            r'{"output": {"Identity.?.?": {"name": "Identity.?.?"}, '
             r'"Identity.?.?": {"name": "Identity.?.?"}, '
             r'"Identity.?.?": {"name": "Identity.?.?"}, '
             r'"Identity.?.?": {"name": "Identity.?.?"}}}',
-            r'{"outputs": {"Identity": {"name": "Identity"}, '
+            r'{"output": {"Identity": {"name": "Identity"}, '
             r'"Identity_1": {"name": "Identity_1"}, '
             r'"Identity_2": {"name": "Identity_2"}, '
             r'"Identity_3": {"name": "Identity_3"}}}',

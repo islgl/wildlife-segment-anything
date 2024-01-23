@@ -1,7 +1,10 @@
 /data
 /models
 /yolov5/results
-/results
+/masks
+/output
+/prompts
+/Dev.md
 
 .vscode
 .idea

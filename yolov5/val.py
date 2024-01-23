@@ -128,10 +128,10 @@ def run(
     single_cls=False,  # treat as single-class dataset
     augment=False,  # augmented inference
     verbose=False,  # verbose output
-    save_txt=False,  # save results to *.txt
-    save_hybrid=False,  # save label+prediction hybrid results to *.txt
+    save_txt=False,  # save masks to *.txt
+    save_hybrid=False,  # save label+prediction hybrid masks to *.txt
     save_conf=False,  # save confidences in --save-txt labels
-    save_json=False,  # save a COCO-JSON results file
+    save_json=False,  # save a COCO-JSON masks file
     project=ROOT / "runs/val",  # save to project/name
     name="exp",  # save to project/name
     exist_ok=False,  # existing project/name ok, do not increment
@@ -297,13 +297,13 @@ def run(
         mp, mr, map50, map = p.mean(), r.mean(), ap50.mean(), ap.mean()
     nt = np.bincount(stats[3].astype(int), minlength=nc)  # number of targets per class
 
-    # Print results
+    # Print masks
     pf = "%22s" + "%11i" * 2 + "%11.3g" * 4  # print format
     LOGGER.info(pf % ("all", seen, nt.sum(), mp, mr, map50, map))
     if nt.sum() == 0:
         LOGGER.warning(f"WARNING ⚠️ no labels found in {task} set, can not compute metrics without labels")
 
-    # Print results per class
+    # Print masks per class
     if (verbose or (nc < 50 and not training)) and nc > 1 and len(stats):
         for i, c in enumerate(ap_class):
             LOGGER.info(pf % (names[c], seen, nt[c], p[i], r[i], ap50[i], ap[i]))
@@ -343,11 +343,11 @@ def run(
             eval.evaluate()
             eval.accumulate()
             eval.summarize()
-            map, map50 = eval.stats[:2]  # update results (mAP@0.5:0.95, mAP@0.5)
+            map, map50 = eval.stats[:2]  # update masks (mAP@0.5:0.95, mAP@0.5)
         except Exception as e:
             LOGGER.info(f"pycocotools unable to run: {e}")
 
-    # Return results
+    # Return masks
     model.float()  # for training
     if not training:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ""
@@ -373,10 +373,10 @@ def parse_opt():
     parser.add_argument("--single-cls", action="store_true", help="treat as single-class dataset")
     parser.add_argument("--augment", action="store_true", help="augmented inference")
     parser.add_argument("--verbose", action="store_true", help="report mAP by class")
-    parser.add_argument("--save-txt", action="store_true", help="save results to *.txt")
-    parser.add_argument("--save-hybrid", action="store_true", help="save label+prediction hybrid results to *.txt")
+    parser.add_argument("--save-txt", action="store_true", help="save masks to *.txt")
+    parser.add_argument("--save-hybrid", action="store_true", help="save label+prediction hybrid masks to *.txt")
     parser.add_argument("--save-conf", action="store_true", help="save confidences in --save-txt labels")
-    parser.add_argument("--save-json", action="store_true", help="save a COCO-JSON results file")
+    parser.add_argument("--save-json", action="store_true", help="save a COCO-JSON masks file")
     parser.add_argument("--project", default=ROOT / "runs/val", help="save to project/name")
     parser.add_argument("--name", default="exp", help="save to project/name")
     parser.add_argument("--exist-ok", action="store_true", help="existing project/name ok, do not increment")
@@ -395,14 +395,14 @@ def main(opt):
 
     if opt.task in ("train", "val", "test"):  # run normally
         if opt.conf_thres > 0.001:  # https://github.com/ultralytics/yolov5/issues/1466
-            LOGGER.info(f"WARNING ⚠️ confidence threshold {opt.conf_thres} > 0.001 produces invalid results")
+            LOGGER.info(f"WARNING ⚠️ confidence threshold {opt.conf_thres} > 0.001 produces invalid masks")
         if opt.save_hybrid:
             LOGGER.info("WARNING ⚠️ --save-hybrid will return high mAP from hybrid labels, not from predictions alone")
         run(**vars(opt))
 
     else:
         weights = opt.weights if isinstance(opt.weights, list) else [opt.weights]
-        opt.half = torch.cuda.is_available() and opt.device != "cpu"  # FP16 for fastest results
+        opt.half = torch.cuda.is_available() and opt.device != "cpu"  # FP16 for fastest masks
         if opt.task == "speed":  # speed benchmarks
             # python val.py --task speed --data coco.yaml --batch 1 --weights yolov5n.pt yolov5s.pt...
             opt.conf_thres, opt.iou_thres, opt.save_json = 0.25, 0.45, False
@@ -417,7 +417,7 @@ def main(opt):
                 for opt.imgsz in x:  # img-size
                     LOGGER.info(f"\nRunning {f} --imgsz {opt.imgsz}...")
                     r, _, t = run(**vars(opt), plots=False)
-                    y.append(r + t)  # results and times
+                    y.append(r + t)  # masks and times
                 np.savetxt(f, y, fmt="%10.4g")  # save
             subprocess.run(["zip", "-r", "study.zip", "study_*.txt"])
             plot_val_study(x=x)  # plot

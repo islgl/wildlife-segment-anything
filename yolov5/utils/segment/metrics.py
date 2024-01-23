@@ -120,7 +120,7 @@ class Metric:
         return self.all_ap.mean() if len(self.all_ap) else 0.0
 
     def mean_results(self):
-        """Mean of results, return mp, mr, map50, map."""
+        """Mean of masks, return mp, mr, map50, map."""
         return (self.mp, self.mr, self.map50, self.map)
 
     def class_result(self, i):
